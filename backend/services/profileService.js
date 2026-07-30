@@ -70,6 +70,7 @@ export const updateUserProfile = async (userId, updates) => {
     if (updates.ProfileImg) allowedUpdates.Profileimage = updates.ProfileImg
     if (updates.Bio) allowedUpdates.Bio = updates.Bio
     if (updates.Gender) allowedUpdates.Gender = updates.Gender
+    if (updates.DOB) allowedUpdates.DOB = updates.DOB
 
     const updatedUser = await findUserByIdAndUpdate(userId, allowedUpdates)
     if (!updatedUser) throw new Error("user not found");
@@ -77,21 +78,11 @@ export const updateUserProfile = async (userId, updates) => {
     return updatedUser
 }
 
-export const uploadUserPhoto = async (userId, filename) => {
-    const user = await findUserById(userId);
-    const oldImage = user?.Profileimage;
-
-    const imageUrl = `/uploads/profile-images/${filename}`;
-    const updatedUser = await findUserByIdAndUpdate(userId, { Profileimage: imageUrl });
-    if (!updatedUser) throw new Error("User not found");
-
-    // clean up the old file, but never delete the schema default
-    if (oldImage && oldImage.startsWith("/uploads/profile-images/")) {
-        fs.unlink(`.${oldImage}`).catch(() => {}); // ignore if already missing
-    }
-
-    return updatedUser;
-}
+export const uploadUserPhoto = async (userId, imageUrl) => {
+  const updatedUser = await findUserByIdAndUpdate(userId, { Profileimage: imageUrl });
+  if (!updatedUser) throw new Error("User not found");
+  return updatedUser;
+};
 
 export const changeUserPassword = async (userId, oldPassword, newPassword) => {
     const user = await findUserByIdWithPassword(userId)

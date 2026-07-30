@@ -7,8 +7,16 @@ import PageSignup from "./pages/SignupPage.jsx"
 import PageLogin from "./pages/LoginPage.jsx"
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Profile from './pages/ProfilePage.jsx';
+import { useEffect } from "react";
 
 function App() {
+  
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+ 
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

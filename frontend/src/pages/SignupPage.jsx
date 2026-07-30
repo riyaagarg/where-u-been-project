@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef,useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+// import AirplaneProgress from "../components/AirplaneProgress";
+
 
 
 const PageSignup =  ()=>{
@@ -38,7 +40,11 @@ const handleLogIn =()=>{
     
   }
 }
-
+// const progress = useMemo(() => {
+//     const fields = Object.values(formData);
+//     const filled = fields.filter((v) => v && v.toString().trim() !== "").length;
+//     return filled / fields.length;
+//   }, [formData]);
 
 const handleSubmit = async (e) =>{
     e.preventDefault()
@@ -72,6 +78,7 @@ const handleSubmit = async (e) =>{
 }
 }
 
+
 return <>
 {toast && (
   <div className="toast toast-top toast-end">
@@ -83,6 +90,8 @@ return <>
  <div className='relative h-screen w-screen overflow-hidden'>
 <img className= 'absolute inset-0 h-full w-full object-cover opacity-65 -z-10 ' src="/Signup-Bg-Img1.png" alt="BG-Image" />
 {/* <button className="glass glass-interactive glass-text absolute rounded-full px-4 py-1.5 text-sm font-normal text-xl mt-5">Hello</button> */}
+{/* <div className="max-w-xl mx-auto pt-12">
+      <AirplaneProgress progress={progress} /> */}
 <div className='relative flex flex-col gap-10 justify-center items-center px-0 py-1.5 font-normal w-[500px] mt-20 ml-200 z-10 '>
 
 <fieldset className='fieldset bg-base-200 border-base-300 rounded-box border p-4 glass glass-interactive glass-text h-[75vh] rounded-[15px] px-5 w-full mb-5 '>
@@ -116,8 +125,12 @@ return <>
 
 </div>
 </div>
+{/* </div> */}
 </>
 
 
 }
 export default PageSignup
+
+
+

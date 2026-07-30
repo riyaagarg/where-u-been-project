@@ -33,7 +33,7 @@ function LandingPage() {
 
       <div className="relative z-10 flex flex-col items-start mt-20 pl-8 md:pl-16 h-full">
         <h1 className="text-white text-6xl font-bold mb-4 glass-text">Pin Your<br /> Memories
-          <span key={index} className=" ml-4 inline-block  animate-[fadeSlide_0.5s_ease] text-[#618687]"> {countries[index]}</span>
+          {/* <span key={index} className=" ml-4 inline-block  animate-[fadeSlide_0.5s_ease] text-[#618687]"> {countries[index]}</span> */}
         </h1>
         <p className="text-white max-w-[55%]">  Your life's too good to stay buried in your camera roll. Pin your
           memories, organize your favorite moments, and keep your story alive
@@ -41,8 +41,12 @@ function LandingPage() {
           turn it into a living map you can revisit anytime. No more scrolling
           through endless folders, just pin it, and it's yours forever.
         </p>
+        <br/>
+        <h2>So...Where you been?</h2>
         <button className="glass glass-interactive glass-text rounded-full px-4 py-1.5 font-normal text-xl mt-5" onClick={() => navigate('/signup')}> Get Started
         </button>
+        
+        
       </div>
 
 

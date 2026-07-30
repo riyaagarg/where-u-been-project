@@ -3,7 +3,7 @@ function LandingNavbar({ onLoginClick, onSignupClick }) {
     <nav className="glass mx-8 mt-5 flex items-center rounded-2xl px-6 py-2.5">
 
       <div className="flex-1">
-        <span className="glass-text text-[1.2rem] font-medium tracking-tight"> Where You Been </span>
+        <span className="glass-text text-[1.2rem] font-medium tracking-tight"> Where You Been (W.U.B)</span>
       </div>
       {/* <div className="flex ">
       <img className="w-40"src="/wub_logo_variations1.png" alt="logo"/> */}

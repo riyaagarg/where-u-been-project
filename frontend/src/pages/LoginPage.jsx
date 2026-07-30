@@ -4,6 +4,7 @@ import ProtectedRoute from '../components/ProtectedRoute.jsx'
 import useAuthStore from "../store/useAuthStore";
 
 
+
 const PageLogin =  ()=>{
   const [showPassword, setShowPassword] = useState(false);
 const navigate = useNavigate()
@@ -75,6 +76,8 @@ setToast({
 });
 
 setTimeout(() => navigate("/home"), 1500);
+document.documentElement.setAttribute("data-theme", data.Theme || "light");
+localStorage.setItem("theme", data.Theme || "light");
 
 } catch (err) {
         setToast({message: err.message, type: 'error'})
@@ -100,21 +103,21 @@ return <>
  <div className='relative h-screen w-screen overflow-hidden'>
 <img className= 'absolute inset-0 h-full w-full object-cover opacity-65 -z-10 ' src="/Signup-Bg-Img1.png" alt="BG-Image" />
 {/* <button className="glass glass-interactive glass-text absolute rounded-full px-4 py-1.5 text-sm font-normal text-xl mt-5">Hello</button> */}
-<div className='relative flex flex-col gap-10 justify-center items-center  font-normal w-[500px] mt-28 ml-200  z-10 h-[65vh] '>
+<div className='relative flex flex-col gap-10 justify-center items-center  font-normal w-[500px] mt-28 ml-200  z-10 h-[75vh] '>
   <form
   onSubmit={handleSubmit}
-  className="fieldset bg-base-200 justify-center items-center border-base-300 rounded-box border p-4 glass glass-interactive glass-text h-[65vh] rounded-[15px] px-5 w-full mb-5"
+  className="fieldset bg-base-200 justify-center items-center border-base-300 rounded-box border p-4 glass glass-interactive glass-text h-[75vh] rounded-[15px] px-5 w-full mb-5"
 >
 
-<fieldset className='fieldset bg-base-200 justify-center items-center border-base-300 rounded-box border p-4 glass glass-interactive glass-text h-[65vh] rounded-[15px] px-5 w-full mb-5 '>
+<fieldset className='fieldset bg-base-200 justify-center items-center border-base-300 rounded-box border p-4 glass glass-interactive glass-text h-[75vh] rounded-[15px] px-5 w-full mb-5 '>
    
 {/*     
   <legend className="fieldset-legend">Login</legend> */}
  
-<h1 className="text-3xl font-bold text-black mb-4 text-center">Log In</h1>
+<h1 className="text-3xl font-bold text-black mb-4 text-center">Welcome Traveller...</h1>
+<h2 className="text-3xl font-bold text-black mb-4 text-center">Log In</h2>
 
-  {/* <label className="label text-lg  text-black">Traveller's User-name:</label>
-  <input type="name" className="input text-lg  text-black" placeholder="User-Name" /> */}
+  
   <label className="label text-lg  text-black">Traveller's Email</label>
   <input type="email" className="input text-lg  text-black" value={formData.Email}
   onChange={handleChange} name='Email' placeholder="Email" />
@@ -128,7 +131,7 @@ return <>
   <button type="submit" className="bg-blue-500 text-white  text-lg px-4 py-2 rounded w-35 mt-4" onClick={handleSubmit}>Log In</button>
    
   
-  <div className='flex flex-col justify-center items-center mt-5'>
+  <div className='flex flex-col justify-center items-center mt-3'>
 <p className='text-2xl text-black font-bold '>Not Registered Yet?</p>
 <button className="bg-blue-500 text-white  text-lg px-4 py-2 rounded w-35 mt-4" onClick={handleSignUp}>Sign Up</button>
 

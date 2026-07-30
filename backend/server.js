@@ -45,7 +45,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use('/api/auth', authRoutes)
 app.use('/api/pins', pinRoutes)
-app.use('/api/profile', profileRoutes)
+app.use('/api/auth', profileRoutes)
 app.use('/api/ai', aiRoutes)
 // app.use('/api/connections', connectionRoutes)
 
