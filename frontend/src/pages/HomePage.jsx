@@ -273,8 +273,9 @@ function HomePage() {
 
       {activePin && (<PinPopup pin={activePin} onClose={() => setActivePin(null)} />)}
       {activePin && (funFact || loadingFact) && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 bg-black/70 text-white text-sm px-4 py-2 rounded-full max-w-md text-center">
-          {loadingFact ? "Loading fun fact..." : funFact}
+        <div className="absolute bottom-8 right-8 z-40 bg-black/85 text-white text-base leading-relaxed px-6 py-4 rounded-2xl max-w-md w-[90%] shadow-xl max-h-120 overflow-y-auto">
+          <h3 className="font-semibold text-lg mb-2">{activePin.name}</h3>
+          {loadingFact ? "Loading..." : funFact}
         </div>
       )}
 
