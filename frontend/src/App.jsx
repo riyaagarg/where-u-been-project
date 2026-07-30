@@ -6,6 +6,7 @@ import FavPage from "./pages/FavPage.jsx";
 import PageSignup from "./pages/SignupPage.jsx"
 import PageLogin from "./pages/LoginPage.jsx"
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Profile from './pages/ProfilePage.jsx';
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
       <Route path="/favorites" element={<ProtectedRoute>
         <FavPage />
       </ProtectedRoute>} />
+       <Route path='/profile' element={<ProtectedRoute>
+         <Profile/>
+      </ProtectedRoute>}/>
       <Route path="/signup" element={<PageSignup />} />
       <Route path="/login" element={<PageLogin />} />
 

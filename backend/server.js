@@ -8,6 +8,8 @@ import pinRoutes from './routes/pin-routes.js'
 // import Pin from "./models/Pin.js";
 // import Photo from "./models/Photo.js";
 import profileRoutes from './routes/profileRoutes.js'
+import fs from "fs";
+import path from "path";
 // import connectionRoutes from './routes/connectionRoutes.js'
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
@@ -31,6 +33,11 @@ const connectDB = async()=>{
 }
 
 connectDB();
+
+if (!fs.existsSync("uploads/profile-images")) {
+  fs.mkdirSync("uploads/profile-images", { recursive: true });
+}
+app.use("/uploads", express.static("uploads"));
 
 
 

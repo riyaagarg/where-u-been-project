@@ -178,7 +178,7 @@ const remaining = photosToDisplay.slice(10);
 
       {remaining.length > 0 && (
         <div className="mt-4 max-h-[600px] overflow-y-auto">
-          <div className="grid grid-cols-6 gap-4">
+          <div className="grid grid-cols-8 gap-4">
             {remaining.map((photo, index) => (
               <img
                 key={index}

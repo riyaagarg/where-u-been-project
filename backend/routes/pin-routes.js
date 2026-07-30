@@ -10,6 +10,9 @@ import {
   setDescriptionHandler,
 } from '../controller/pin-controller1.js'
 
+
+
+
 const router = express.Router();
 router.use(protect)
 
@@ -18,6 +21,7 @@ router.post('/', createPinHandler)
 router.patch('/:pinId/favorite', setFavoriteHandler)
 router.post('/:pinId/photos', upload.array('photos', 30), uploadPhotosHandler)
 router.patch('/:pinId/description', setDescriptionHandler)
+
 
 export default router;
 
