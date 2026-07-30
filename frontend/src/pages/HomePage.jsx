@@ -33,6 +33,7 @@ function HomePage() {
   //ai
   const [funFact, setFunFact] = useState("");
   const [loadingFact, setLoadingFact] = useState(false);
+  const [factError, setFactError] = useState("");
 
   //globe render
   useEffect(() => {
@@ -220,12 +221,14 @@ function HomePage() {
   useEffect(() => {
     if (!activePin) {
       setFunFact("");
+      setFactError("");
       return;
     }
 
     const fetchFact = async () => {
       setLoadingFact(true);
       setFunFact("");
+      setFactError("");
       try {
         const res = await fetch("http://localhost:5000/api/ai/fun-fact", {
           method: "POST",
@@ -236,9 +239,13 @@ function HomePage() {
           body: JSON.stringify({ name: activePin.name }),
         });
         const data = await res.json();
-        setFunFact(res.ok ? data.fact : "");
-      } catch {
-        setFunFact("");
+        if (res.ok) {
+          setFunFact(data.fact);
+        } else {
+          setFactError(data.message || "Something went wrong");
+        }
+      } catch (err) {
+        setFactError("Network error");
       } finally {
         setLoadingFact(false);
       }
@@ -272,10 +279,10 @@ function HomePage() {
       </div>
 
       {activePin && (<PinPopup pin={activePin} onClose={() => setActivePin(null)} />)}
-      {activePin && (funFact || loadingFact) && (
+      {activePin && (funFact || loadingFact || factError) && (
         <div className="absolute bottom-8 right-8 z-40 bg-black/85 text-white text-base leading-relaxed px-6 py-4 rounded-2xl max-w-md w-[90%] shadow-xl max-h-120 overflow-y-auto">
           <h3 className="font-semibold text-lg mb-2">{activePin.name}</h3>
-          {loadingFact ? "Loading..." : funFact}
+          {loadingFact ? "Loading..." : factError || funFact}
         </div>
       )}
 

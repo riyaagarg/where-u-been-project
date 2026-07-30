@@ -5,6 +5,6 @@ import { funFactHandler } from "../controller/ai-controller.js";
 const router = express.Router();
 router.use(protect); // reuses your existing JWT auth check
 
-router.post("/fun-fact", funFactHandler);
+router.post('/fun-fact', funFactHandler);
 
 export default router;
