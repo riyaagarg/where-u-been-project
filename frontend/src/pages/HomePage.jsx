@@ -15,6 +15,7 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const [activePin, setActivePin] = useState(null);
   const [searchError, setSearchError] = useState("");
+  const [mapLoaded, setMapLoaded] = useState(false);
   // const user = useAuthStore((state) => state.user);
   const auth = useAuthStore();
 
@@ -30,7 +31,7 @@ const fetchPins = usePinStore((state) => state.fetchPins);
 
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const markersRef = useRef([]); // { pinId, marker } — only pins searched THIS visit
+  const markersRef = useRef([]); // { pinId, marker, type: 'temp' | 'persistent' }
   const mapLoadedRef = useRef(false);
 
   useEffect(() => {
@@ -62,7 +63,8 @@ const fetchPins = usePinStore((state) => state.fetchPins);
         }
       });
 
-      mapLoadedRef.current = true;  
+      mapLoadedRef.current = true;
+      setMapLoaded(true);
      
     });
 
@@ -79,9 +81,14 @@ const fetchPins = usePinStore((state) => state.fetchPins);
     const map = mapRef.current;
     if (!map || !mapLoadedRef.current) return;
 
-    // clear any previously dropped marker(s) — only one pin visible at a time
-    markersRef.current.forEach((m) => m.marker.remove());
-    markersRef.current = [];
+    // clear only the temporary "just searched" marker(s) — leave persistent ones alone
+    markersRef.current = markersRef.current.filter((m) => {
+      if (m.type === "temp") {
+        m.marker.remove();
+        return false;
+      }
+      return true;
+    });
 
     const marker = new mapboxgl.Marker({ color: "#960303" })
       .setLngLat([pin.lng, pin.lat])
@@ -91,7 +98,7 @@ const fetchPins = usePinStore((state) => state.fetchPins);
     marker.getElement().style.cursor = "pointer";
     marker.getElement().addEventListener("click", () => setActivePin(pin));
 
-    markersRef.current.push({ pinId: pin._id, marker });
+    markersRef.current.push({ pinId: pin._id, marker, type: "temp" });
   };
 
  
@@ -108,17 +115,31 @@ const fetchPins = usePinStore((state) => state.fetchPins);
 // }, [user]);
 
 useEffect(() => {
-  if (!mapRef.current) return;
+  const map = mapRef.current;
+  if (!map || !mapLoadedRef.current) return;
 
-  
-  pins.forEach((pin) => {
-    new mapboxgl.Marker({ color: "#e11d48" })
-      .setLngLat([pin.lng, pin.lat])
-      .addTo(mapRef.current)
-      .getElement()
-      .addEventListener("click", () => setActivePin(pin));
+  // clear old persistent markers before replotting — avoids duplicate stacking, leaves temp marker alone
+  markersRef.current = markersRef.current.filter((m) => {
+    if (m.type === "persistent") {
+      m.marker.remove();
+      return false;
+    }
+    return true;
   });
-}, [pins]);
+
+  const pinsWithPhotos = pins.filter((p) => p.photos && p.photos.length > 0);
+
+  pinsWithPhotos.forEach((pin) => {
+    const marker = new mapboxgl.Marker({ color: "#e11d48" })
+      .setLngLat([pin.lng, pin.lat])
+      .addTo(map);
+
+    marker.getElement().style.cursor = "pointer";
+    marker.getElement().addEventListener("click", () => setActivePin(pin));
+
+    markersRef.current.push({ pinId: pin._id, marker, type: "persistent" });
+  });
+}, [pins, mapLoaded]);
 
   
   const handleSearch = async (e) => {

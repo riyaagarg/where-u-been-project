@@ -63,7 +63,7 @@ function FavPage() {
 
     const plot = () => {
       const existingIds = markersRef.current.map((m) => m.favId);
-      const currentIds = favorites.map((f) => f.id);
+      const currentIds = favorites.map((f) => f._id);
 
       // remove markers for favorites that no longer exist
       markersRef.current = markersRef.current.filter((m) => {
@@ -78,16 +78,16 @@ function FavPage() {
       const validFavs = favorites.filter((f) => f.lng != null && f.lat != null);
 
       validFavs.forEach((fav) => {
-        if (existingIds.includes(fav.id)) return;
+        if (existingIds.includes(fav._id)) return;
 
-        const marker = new mapboxgl.Marker({ color: "#ec4899" }) // pink-500
+        const marker = new mapboxgl.Marker({ color: "#ec4899" }) 
           .setLngLat([fav.lng, fav.lat])
           .addTo(map);
 
         marker.getElement().style.cursor = "pointer";
         marker.getElement().addEventListener("click", () => setActiveFav(fav));
 
-        markersRef.current.push({ favId: fav.id, marker });
+        markersRef.current.push({ favId: fav._id, marker });
       });
 
       if (validFavs.length > 0) {
@@ -105,7 +105,7 @@ function FavPage() {
   }, [favorites]);
 
   const handleRemove = () => {
-    removeFavorite(activeFav.id);
+    removeFavorite(activeFav._id);
     setActiveFav(null);
   };
 
