@@ -1,23 +1,19 @@
-import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const generateFunFact = async (placeName) => {
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: `Write a rich, descriptive travel guide paragraph (at least 120 words) about "${placeName}" for a travel app. Cover: 1) what the place is famous for, 2) 2-3 must-see attractions with a sentence of detail on each, 3) what makes it worth visiting. Use vivid, evocative language. Write it as flowing prose paragraphs only — no markdown, no bullet points, no headers, no asterisks.`,
-        });
+  const response = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      {
+        role: "user",
+        content: `Write a rich, descriptive travel guide paragraph (at least 120 words) about "${placeName}" for a travel app. Cover: 1) what the place is famous for, 2) 2-3 must-see attractions with a sentence of detail on each, 3) what makes it worth visiting. Use vivid, evocative language. Do not use a bullet list — write it as flowing prose.`,
+      },
+    ],
+    max_tokens: 300,
+    temperature: 0.8,
+  });
 
-        const content = response?.text;
-
-        if (!content) {
-            throw new Error("Empty response from model");
-        }
-
-        return content.trim();
-    } catch (error) {
-        console.error(`generateFunFact failed for "${placeName}":`, error.message);
-        return `${placeName} is a place full of stories waiting to be discovered — pin it and come back to explore what makes it special.`;
-    }
+  return response.choices[0].message.content.trim();
 };
