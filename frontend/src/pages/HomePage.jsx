@@ -18,14 +18,12 @@ function HomePage() {
   const [mapLoaded, setMapLoaded] = useState(false);
   // const user = useAuthStore((state) => state.user);
   const auth = useAuthStore();
+  console.log("AUTH STORE:", auth);
 
-console.log("AUTH STORE:", auth);
-
-const user = auth.user;
-const fetchPins = usePinStore((state) => state.fetchPins);
-
-  const pins = usePinStore((state) => state.pins);
-  const addPin = usePinStore((state) => state.addPin);
+   const user = auth.user;
+   const fetchPins = usePinStore((state) => state.fetchPins);
+   const pins = usePinStore((state) => state.pins);
+   const addPin = usePinStore((state) => state.addPin);
   
 
 
@@ -90,6 +88,7 @@ const fetchPins = usePinStore((state) => state.fetchPins);
       return true;
     });
 
+    //new search appear
     const marker = new mapboxgl.Marker({ color: "#960303" })
       .setLngLat([pin.lng, pin.lat])
       .addTo(map);
@@ -130,7 +129,7 @@ useEffect(() => {
   const pinsWithPhotos = pins.filter((p) => p.photos && p.photos.length > 0);
 
   pinsWithPhotos.forEach((pin) => {
-    const marker = new mapboxgl.Marker({ color: "#e11d48" })
+    const marker = new mapboxgl.Marker({ color: "red" })
       .setLngLat([pin.lng, pin.lat])
       .addTo(map);
 
@@ -140,6 +139,7 @@ useEffect(() => {
     markersRef.current.push({ pinId: pin._id, marker, type: "persistent" });
   });
 }, [pins, mapLoaded]);
+
 
   
   const handleSearch = async (e) => {

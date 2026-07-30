@@ -80,7 +80,7 @@ function FavPage() {
       validFavs.forEach((fav) => {
         if (existingIds.includes(fav._id)) return;
 
-        const marker = new mapboxgl.Marker({ color: "#ec4899" }) 
+        const marker = new mapboxgl.Marker({ color: "#008000" }) 
           .setLngLat([fav.lng, fav.lat])
           .addTo(map);
 
