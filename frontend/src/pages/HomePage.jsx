@@ -20,18 +20,21 @@ function HomePage() {
   const auth = useAuthStore();
   console.log("AUTH STORE:", auth);
 
-   const user = auth.user;
-   const fetchPins = usePinStore((state) => state.fetchPins);
-   const pins = usePinStore((state) => state.pins);
-   const addPin = usePinStore((state) => state.addPin);
-  
-
+  const user = auth.user;
+  const fetchPins = usePinStore((state) => state.fetchPins);
+  const pins = usePinStore((state) => state.pins);
+  const addPin = usePinStore((state) => state.addPin);
 
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]); // { pinId, marker, type: 'temp' | 'persistent' }
   const mapLoadedRef = useRef(false);
 
+  //ai
+  const [funFact, setFunFact] = useState("");
+  const [loadingFact, setLoadingFact] = useState(false);
+
+  //globe render
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -63,7 +66,7 @@ function HomePage() {
 
       mapLoadedRef.current = true;
       setMapLoaded(true);
-     
+
     });
 
     mapRef.current = map;
@@ -93,55 +96,56 @@ function HomePage() {
       .setLngLat([pin.lng, pin.lat])
       .addTo(map);
 
-    
+
     marker.getElement().style.cursor = "pointer";
     marker.getElement().addEventListener("click", () => setActivePin(pin));
 
     markersRef.current.push({ pinId: pin._id, marker, type: "temp" });
   };
 
- 
-// console.log("yes rendering")
 
-// console.log("Current user:", user);
+  // console.log("yes rendering")
 
-// useEffect(() => {
-//   console.log("useeffect User:", user);
-//   if (user?.userId) {
-//     console.log("Fetching pins for:", user.userId);
-//     fetchPins(user.userId);   
-//   }
-// }, [user]);
+  // console.log("Current user:", user);
 
-useEffect(() => {
-  const map = mapRef.current;
-  if (!map || !mapLoadedRef.current) return;
+  // useEffect(() => {
+  //   console.log("useeffect User:", user);
+  //   if (user?.userId) {
+  //     console.log("Fetching pins for:", user.userId);
+  //     fetchPins(user.userId);   
+  //   }
+  // }, [user]);
 
-  // clear old persistent markers before replotting — avoids duplicate stacking, leaves temp marker alone
-  markersRef.current = markersRef.current.filter((m) => {
-    if (m.type === "persistent") {
-      m.marker.remove();
-      return false;
-    }
-    return true;
-  });
+  //pins render
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoadedRef.current) return;
 
-  const pinsWithPhotos = pins.filter((p) => p.photos && p.photos.length > 0);
+    // clear old persistent markers before replotting — avoids duplicate stacking, leaves temp marker alone
+    markersRef.current = markersRef.current.filter((m) => {
+      if (m.type === "persistent") {
+        m.marker.remove();
+        return false;
+      }
+      return true;
+    });
 
-  pinsWithPhotos.forEach((pin) => {
-    const marker = new mapboxgl.Marker({ color: "red" })
-      .setLngLat([pin.lng, pin.lat])
-      .addTo(map);
+    const pinsWithPhotos = pins.filter((p) => p.photos && p.photos.length > 0);
 
-    marker.getElement().style.cursor = "pointer";
-    marker.getElement().addEventListener("click", () => setActivePin(pin));
+    pinsWithPhotos.forEach((pin) => {
+      const marker = new mapboxgl.Marker({ color: "red" })
+        .setLngLat([pin.lng, pin.lat])
+        .addTo(map);
 
-    markersRef.current.push({ pinId: pin._id, marker, type: "persistent" });
-  });
-}, [pins, mapLoaded]);
+      marker.getElement().style.cursor = "pointer";
+      marker.getElement().addEventListener("click", () => setActivePin(pin));
+
+      markersRef.current.push({ pinId: pin._id, marker, type: "persistent" });
+    });
+  }, [pins, mapLoaded]);
 
 
-  
+
   const handleSearch = async (e) => {
     e.preventDefault();
 
@@ -189,7 +193,7 @@ useEffect(() => {
         }
       }
       // const newPin = addPin(place, lng, lat, user.userId);
-      
+
       dropMarker(targetPin);
 
       map.once("moveend", () => {
@@ -203,13 +207,45 @@ useEffect(() => {
     }
   };
 
-useEffect(() => {
-  console.log("useeffect User:", user);
-  if (user?.userId) {
-    console.log("Fetching pins for:", user.userId);
-    fetchPins();   
-  }
-}, [user]);
+  useEffect(() => {
+    console.log("useeffect User:", user);
+    if (user?.userId) {
+      console.log("Fetching pins for:", user.userId);
+      fetchPins();
+    }
+  }, [user]);
+
+
+  //ai useeffect
+  useEffect(() => {
+    if (!activePin) {
+      setFunFact("");
+      return;
+    }
+
+    const fetchFact = async () => {
+      setLoadingFact(true);
+      setFunFact("");
+      try {
+        const res = await fetch("http://localhost:5000/api/ai/fun-fact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ name: activePin.name }),
+        });
+        const data = await res.json();
+        setFunFact(res.ok ? data.fact : "");
+      } catch {
+        setFunFact("");
+      } finally {
+        setLoadingFact(false);
+      }
+    };
+
+    fetchFact();
+  }, [activePin]);
 
 
   return (
@@ -233,16 +269,15 @@ useEffect(() => {
             {searchError}
           </p>
         )}
-
-       
       </div>
 
-      {activePin && (
-        <PinPopup
-          pin={activePin}
-          onClose={() => setActivePin(null)}
-        />
+      {activePin && (<PinPopup pin={activePin} onClose={() => setActivePin(null)} />)}
+      {activePin && (funFact || loadingFact) && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 bg-black/70 text-white text-sm px-4 py-2 rounded-full max-w-md text-center">
+          {loadingFact ? "Loading fun fact..." : funFact}
+        </div>
       )}
+
     </div>
   );
 }

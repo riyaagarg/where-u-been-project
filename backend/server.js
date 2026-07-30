@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import authRoutes from './routes/user-auth-routes.js'
 import multer from "multer";
 import pinRoutes from './routes/pin-routes.js'
+import aiRoutes from './routes/ai-routes.js'   
 // import Pin from "./models/Pin.js";
 // import Photo from "./models/Photo.js";
 import profileRoutes from './routes/profileRoutes.js'
@@ -38,6 +39,7 @@ connectDB();
 app.use('/api/auth', authRoutes)
 app.use('/api/pins', pinRoutes)
 app.use('/api/profile', profileRoutes)
+app.use('/api/ai', aiRoutes)
 // app.use('/api/connections', connectionRoutes)
 
 app.use((err, req, res, next) => {
