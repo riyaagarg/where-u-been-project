@@ -5,6 +5,7 @@ import usePinStore from "../store/usePinStore";
 import useAuthStore from "../store/useAuthStore"
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import ReactMarkdown from "react-markdown";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const MAPBOX_STYLE = "mapbox://styles/riyaaagarg/cms4dk4p200ty01qk3ecgdkj4";
@@ -15,24 +16,27 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const [activePin, setActivePin] = useState(null);
   const [searchError, setSearchError] = useState("");
+  const [mapLoaded, setMapLoaded] = useState(false);
   // const user = useAuthStore((state) => state.user);
   const auth = useAuthStore();
+  console.log("AUTH STORE:", auth);
 
-console.log("AUTH STORE:", auth);
-
-const user = auth.user;
-const fetchPins = usePinStore((state) => state.fetchPins);
-
+  const user = auth.user;
+  const fetchPins = usePinStore((state) => state.fetchPins);
   const pins = usePinStore((state) => state.pins);
   const addPin = usePinStore((state) => state.addPin);
-  
-
 
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const markersRef = useRef([]); // { pinId, marker } — only pins searched THIS visit
+  const markersRef = useRef([]); // { pinId, marker, type: 'temp' | 'persistent' }
   const mapLoadedRef = useRef(false);
 
+  //ai
+  const [funFact, setFunFact] = useState("");
+  const [loadingFact, setLoadingFact] = useState(false);
+  const [factError, setFactError] = useState("");
+
+  //globe render
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -62,8 +66,9 @@ const fetchPins = usePinStore((state) => state.fetchPins);
         }
       });
 
-      mapLoadedRef.current = true;  
-     
+      mapLoadedRef.current = true;
+      setMapLoaded(true);
+
     });
 
     mapRef.current = map;
@@ -79,48 +84,70 @@ const fetchPins = usePinStore((state) => state.fetchPins);
     const map = mapRef.current;
     if (!map || !mapLoadedRef.current) return;
 
-    // clear any previously dropped marker(s) — only one pin visible at a time
-    markersRef.current.forEach((m) => m.marker.remove());
-    markersRef.current = [];
+    // clear only the temporary "just searched" marker(s) — leave persistent ones alone
+    markersRef.current = markersRef.current.filter((m) => {
+      if (m.type === "temp") {
+        m.marker.remove();
+        return false;
+      }
+      return true;
+    });
 
+    //new search appear
     const marker = new mapboxgl.Marker({ color: "#960303" })
       .setLngLat([pin.lng, pin.lat])
       .addTo(map);
 
-    
+
     marker.getElement().style.cursor = "pointer";
     marker.getElement().addEventListener("click", () => setActivePin(pin));
 
-    markersRef.current.push({ pinId: pin._id, marker });
+    markersRef.current.push({ pinId: pin._id, marker, type: "temp" });
   };
 
- 
-// console.log("yes rendering")
 
-// console.log("Current user:", user);
+  // console.log("yes rendering")
 
-// useEffect(() => {
-//   console.log("useeffect User:", user);
-//   if (user?.userId) {
-//     console.log("Fetching pins for:", user.userId);
-//     fetchPins(user.userId);   
-//   }
-// }, [user]);
+  // console.log("Current user:", user);
 
-useEffect(() => {
-  if (!mapRef.current) return;
+  // useEffect(() => {
+  //   console.log("useeffect User:", user);
+  //   if (user?.userId) {
+  //     console.log("Fetching pins for:", user.userId);
+  //     fetchPins(user.userId);   
+  //   }
+  // }, [user]);
 
-  
-  pins.forEach((pin) => {
-    new mapboxgl.Marker({ color: "#e11d48" })
-      .setLngLat([pin.lng, pin.lat])
-      .addTo(mapRef.current)
-      .getElement()
-      .addEventListener("click", () => setActivePin(pin));
-  });
-}, [pins]);
+  //pins render
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoadedRef.current) return;
 
-  
+    // clear old persistent markers before replotting — avoids duplicate stacking, leaves temp marker alone
+    markersRef.current = markersRef.current.filter((m) => {
+      if (m.type === "persistent") {
+        m.marker.remove();
+        return false;
+      }
+      return true;
+    });
+
+    const pinsWithPhotos = pins.filter((p) => p.photos && p.photos.length > 0);
+
+    pinsWithPhotos.forEach((pin) => {
+      const marker = new mapboxgl.Marker({ color: "red" })
+        .setLngLat([pin.lng, pin.lat])
+        .addTo(map);
+
+      marker.getElement().style.cursor = "pointer";
+      marker.getElement().addEventListener("click", () => setActivePin(pin));
+
+      markersRef.current.push({ pinId: pin._id, marker, type: "persistent" });
+    });
+  }, [pins, mapLoaded]);
+
+
+
   const handleSearch = async (e) => {
     e.preventDefault();
 
@@ -168,7 +195,7 @@ useEffect(() => {
         }
       }
       // const newPin = addPin(place, lng, lat, user.userId);
-      
+
       dropMarker(targetPin);
 
       map.once("moveend", () => {
@@ -182,13 +209,51 @@ useEffect(() => {
     }
   };
 
-useEffect(() => {
-  console.log("useeffect User:", user);
-  if (user?.userId) {
-    console.log("Fetching pins for:", user.userId);
-    fetchPins();   
-  }
-}, [user]);
+  useEffect(() => {
+    console.log("useeffect User:", user);
+    if (user?.userId) {
+      console.log("Fetching pins for:", user.userId);
+      fetchPins();
+    }
+  }, [user]);
+
+
+  //ai useeffect
+  useEffect(() => {
+    if (!activePin) {
+      setFunFact("");
+      setFactError("");
+      return;
+    }
+
+    const fetchFact = async () => {
+      setLoadingFact(true);
+      setFunFact("");
+      setFactError("");
+      try {
+        const res = await fetch("http://localhost:5000/api/ai/fun-fact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ name: activePin.name }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setFunFact(data.fact);
+        } else {
+          setFactError(data.message || "Something went wrong");
+        }
+      } catch (err) {
+        setFactError("Network error");
+      } finally {
+        setLoadingFact(false);
+      }
+    };
+
+    fetchFact();
+  }, [activePin]);
 
 
   return (
@@ -212,16 +277,15 @@ useEffect(() => {
             {searchError}
           </p>
         )}
-
-       
       </div>
 
-      {activePin && (
-        <PinPopup
-          pin={activePin}
-          onClose={() => setActivePin(null)}
-        />
+      {activePin && (<PinPopup pin={activePin} onClose={() => setActivePin(null)} />)}
+      {activePin && (funFact || loadingFact || factError) && (
+        <div className="absolute bottom-8 right-8 z-40 bg-black/85 text-white text-base leading-relaxed px-6 py-4 rounded-2xl max-w-md w-[90%] shadow-xl max-h-120 overflow-y-auto prose prose-invert prose-sm prose-headings:text-[#808080] prose-strong:text-[#808080]">
+          {loadingFact ? "Loading..." : factError || <ReactMarkdown>{funFact}</ReactMarkdown>}
+        </div>
       )}
+
     </div>
   );
 }

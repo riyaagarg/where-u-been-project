@@ -13,8 +13,8 @@
 //   favorites: [],
 //   photos: [],
 
- 
- 
+
+
 
 //   fetchPins: async () => {
 //   const res = await fetch(API, { headers: authHeaders(false) });
@@ -142,7 +142,10 @@ const usePinStore = create((set, get) => ({
     const res = await fetch(API, { headers: authHeaders(false) });
     if (!res.ok) throw new Error("Failed to fetch pins");
     const data = await res.json();
-    set({ pins: data });
+    set({
+      pins: data,
+      favorites: data.filter((p) => p.isFavorite), // 👈 add this line
+    });
   },
 
   addPin: async (name, lng, lat) => {

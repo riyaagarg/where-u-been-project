@@ -10,6 +10,11 @@ export const getPin = async (userId) => {
 }
 
 export const setFavorite = async (userId, pinId, isFavorite) => {
+    
+    console.log("userId:", userId);
+    console.log("pinId:", pinId);
+    console.log("favorite:", isFavorite);
+
     const pin = await updatePinById(pinId, userId, { isFavorite })
     if (!pin) throw new Error('Pin not found')
     return pin
