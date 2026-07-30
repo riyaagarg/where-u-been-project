@@ -7,14 +7,24 @@ const ProtectedRoute = ({ children }) => {
   const pinsLoaded = usePinStore((state) => state.pinsLoaded);
   const fetchPins = usePinStore((state) => state.fetchPins);
 
-  useEffect(() => {
+//   useEffect(() => {
+//     if (token && !pinsLoaded) {
+//       fetchPins();
+//     }
+//     if (!token || token === "undefined") {
+//   return <Navigate to="/login" replace />;
+// }
+//   }, [token, pinsLoaded, fetchPins]);
+
+useEffect(() => {
     if (token && !pinsLoaded) {
       fetchPins();
     }
-    if (!token || token === "undefined") {
-  return <Navigate to="/login" replace />;
-}
   }, [token, pinsLoaded, fetchPins]);
+
+  if (!token || token === "undefined") {
+    return <Navigate to="/login" replace />;
+  }
 
   if (!token) {
     return <Navigate to="/login" replace />;

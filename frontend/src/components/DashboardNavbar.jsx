@@ -53,14 +53,20 @@
 
 // export default DashboardNavbar;
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import usePinStore from "../store/usePinStore";
 import useAuthStore from "../store/useAuthStore";
 
 function DashboardNavbar() {
   const favorites = usePinStore((state) => state.favorites);
   const user = useAuthStore((state) => state.user);
-
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+const handleLogout = (e) => {
+    e.preventDefault();   
+    logout();             
+    navigate("/");   
+  }
   return (
     <nav className=" glass-dashboard mt-5 flex items-center rounded-2xl px-6 py-2.5 ">
       <div className="flex-1">
@@ -84,13 +90,13 @@ function DashboardNavbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a className="justify-between">
+              <a href="/profile" className="justify-between">
                 Profile
-                <span className="badge">New</span>
+                
               </a>
             </li>
-            <li><a>Settings</a></li>
-            <li><a>Logout</a></li>
+            
+            <li><a onClick={handleLogout}>Logout</a></li>
           </ul>
         </div>
       </div>

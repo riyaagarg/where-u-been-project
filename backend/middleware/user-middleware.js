@@ -10,7 +10,7 @@ const protect = (req, res, next) =>{
             message: 'token not found'
         })
     }
-    //Bearer wkdewkdhkwejdolwejlodfjwelojdfolewjoeld
+   
     console.log(authHeader)
     console.log(authHeader.split(' '))
     const token  = authHeader.split(' ')[1]

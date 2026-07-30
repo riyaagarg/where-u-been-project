@@ -7,7 +7,7 @@ import multer from "multer";
 import pinRoutes from './routes/pin-routes.js'
 // import Pin from "./models/Pin.js";
 // import Photo from "./models/Photo.js";
-// import profileRoutes from './routes/profileRoutes.js'
+import profileRoutes from './routes/profileRoutes.js'
 // import connectionRoutes from './routes/connectionRoutes.js'
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
@@ -37,7 +37,7 @@ connectDB();
 
 app.use('/api/auth', authRoutes)
 app.use('/api/pins', pinRoutes)
-// app.use('/api/profile', profileRoutes)
+app.use('/api/profile', profileRoutes)
 // app.use('/api/connections', connectionRoutes)
 
 app.use((err, req, res, next) => {
