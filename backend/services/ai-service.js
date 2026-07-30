@@ -8,10 +8,24 @@ export const generateFunFact = async (placeName) => {
     messages: [
       {
         role: "user",
-        content: `Write a rich, descriptive travel guide paragraph (at least 120 words) about "${placeName}" for a travel app. Cover: 1) what the place is famous for, 2) 2-3 must-see attractions with a sentence of detail on each, 3) what makes it worth visiting. Use vivid, evocative language. Do not use a bullet list — write it as flowing prose.`,
+        content: `Write a travel guide entry about "${placeName}" for a travel app, formatted in markdown like this:
+
+## ${placeName.toUpperCase()}
+
+A short, vivid 2-3 sentence intro to what the place is famous for.
+
+### Must-See Attractions
+- **Attraction Name** — a sentence of detail on why it's worth visiting.
+- **Attraction Name** — a sentence of detail on why it's worth visiting.
+- **Attraction Name** — a sentence of detail on why it's worth visiting.
+- **Attraction Name** — a sentence of detail on why it's worth visiting.
+
+
+
+Use vivid, evocative language throughout. Follow this structure exactly, using proper markdown syntax (##, ###, -, **bold**).`,
       },
     ],
-    max_tokens: 300,
+    max_tokens: 500,
     temperature: 0.8,
   });
 

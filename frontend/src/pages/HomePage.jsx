@@ -5,6 +5,7 @@ import usePinStore from "../store/usePinStore";
 import useAuthStore from "../store/useAuthStore"
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import ReactMarkdown from "react-markdown";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const MAPBOX_STYLE = "mapbox://styles/riyaaagarg/cms4dk4p200ty01qk3ecgdkj4";
@@ -280,9 +281,8 @@ function HomePage() {
 
       {activePin && (<PinPopup pin={activePin} onClose={() => setActivePin(null)} />)}
       {activePin && (funFact || loadingFact || factError) && (
-        <div className="absolute bottom-8 right-8 z-40 bg-black/85 text-white text-base leading-relaxed px-6 py-4 rounded-2xl max-w-md w-[90%] shadow-xl max-h-120 overflow-y-auto">
-          <h3 className="font-semibold text-lg mb-2">{activePin.name}</h3>
-          {loadingFact ? "Loading..." : factError || funFact}
+        <div className="absolute bottom-8 right-8 z-40 bg-black/85 text-white text-base leading-relaxed px-6 py-4 rounded-2xl max-w-md w-[90%] shadow-xl max-h-120 overflow-y-auto prose prose-invert prose-sm prose-headings:text-[#808080] prose-strong:text-[#808080]">
+          {loadingFact ? "Loading..." : factError || <ReactMarkdown>{funFact}</ReactMarkdown>}
         </div>
       )}
 
