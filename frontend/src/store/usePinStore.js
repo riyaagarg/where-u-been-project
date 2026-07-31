@@ -125,7 +125,7 @@
 // export default usePinStore;
 import { create } from "zustand";
 
-const API = "http://localhost:5000/api/pins";
+const API = `${VITE_API_URL}/pins`;
 
 const authHeaders = (isJson = true) => {
   const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };

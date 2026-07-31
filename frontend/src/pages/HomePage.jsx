@@ -231,7 +231,7 @@ function HomePage() {
       setFunFact("");
       setFactError("");
       try {
-        const res = await fetch("http://localhost:5000/api/ai/fun-fact", {
+        const res = await fetch(`${VITE_API_URL}ai/fun-fact`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
