@@ -245,7 +245,7 @@ const Profile = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${VITE_API_URL}/auth/profile`, {
+      const response = await fetch(`${VITE_API_URL}auth/profile`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -342,7 +342,7 @@ const Profile = () => {
       const uploadData = new FormData();
       uploadData.append("photo", file);
 
-      const response = await fetch(`${VITE_API_URL}/auth/profile/photo`, {
+      const response = await fetch(`${VITE_API_URL}auth/profile/photo`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
         body: uploadData,
