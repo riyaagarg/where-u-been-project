@@ -6,7 +6,7 @@ import FavPage from "./pages/FavPage.jsx";
 import PageSignup from "./pages/SignupPage.jsx"
 import PageLogin from "./pages/LoginPage.jsx"
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import Profile from './pages/ProfilePage.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
 import { useEffect } from "react";
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
         <FavPage />
       </ProtectedRoute>} />
        <Route path='/profile' element={<ProtectedRoute>
-         <Profile/>
+         <ProfilePage/>
       </ProtectedRoute>}/>
       <Route path="/signup" element={<PageSignup />} />
       <Route path="/login" element={<PageLogin />} />
