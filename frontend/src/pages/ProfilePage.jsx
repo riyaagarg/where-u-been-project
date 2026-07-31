@@ -342,7 +342,7 @@ const Profile = () => {
       const uploadData = new FormData();
       uploadData.append("photo", file);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URLL}auth/profile/photo`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}auth/profile/photo`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
         body: uploadData,
