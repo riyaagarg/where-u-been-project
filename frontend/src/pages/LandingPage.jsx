@@ -4,7 +4,7 @@ import LoginPopup from "../components/LoginPopup";
 import SignupPopup from "../components/SignupPopup";
 import { useNavigate } from 'react-router-dom'
 
-import landingVideo from "../assets/landing-page-bgvideo.mp4";
+import landingVideo from "../../public/landing-page-bgvideo.mp4";
 
 function LandingPage() {
   const navigate = useNavigate()
