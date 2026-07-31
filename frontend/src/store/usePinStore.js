@@ -125,7 +125,7 @@
 // export default usePinStore;
 import { create } from "zustand";
 
-const API = `${VITE_API_URL}pins`;
+const API = `${import.meta.env.VITE_API_URLL}pins`;
 
 const authHeaders = (isJson = true) => {
   const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
